@@ -8,7 +8,7 @@ import time
 import itertools
 import string
 
-# --- إعدادات الواجهة الاحترافية (SHΔDØW WORM-AI Style) ---
+# --- إعدادات الواجهة الاحترافية ---
 st.set_page_config(page_title="WORM-AI: Elite Commander", page_icon="💀", layout="centered")
 
 st.markdown("""
@@ -21,7 +21,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- وظائف التطهير والكسر المركزية ---
+# --- وظائف التطهير والكسر ---
 def clean_text(text):
     if not text: return ""
     return re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\xff]', '', str(text))
@@ -70,7 +70,7 @@ if mission == "📊 محول فواتير فودافون":
             except Exception as e:
                 st.error(f"خطأ أثناء المعالجة: {e}")
 
-# --- المهمة الثانية: فك التشفير (Brute Force Only) ---
+# --- المهمة الثانية: فك التشفير ---
 elif mission == "🔓 فك تشفير إكسل":
     st.header("وحدة التخمين العشوائي الذكي")
     locked_file = st.file_uploader("ارفع ملف الإكسل المشفر (.xlsx)", type=["xlsx"])
@@ -80,13 +80,11 @@ elif mission == "🔓 فك تشفير إكسل":
         min_l = col1.number_input("أقل طول", value=1, min_value=1)
         max_l = col2.number_input("أقصى طول", value=6, min_value=1)
         
-        # اختيار الحروف (افتراضي أرقام فقط لسرعة الأداء)
         charset = string.digits
         
         if st.button("إطلاق هجوم الظل ⚡"):
             try:
                 office_file = msoffcrypto.OfficeFile(locked_file)
-                # حساب تقريبي لإجمالي الاحتمالات لضبط شريط التقدم
                 total_est = sum(len(charset)**i for i in range(min_l, max_l + 1))
                 
                 bar = st.progress(0)
@@ -103,10 +101,25 @@ elif mission == "🔓 فك تشفير إكسل":
                         pwd = "".join(attempt)
                         count += 1
                         
-                        # تحديث الواجهة كل 100 محاولة لتسريع الأداء
                         if count % 100 == 0:
                             progress_val = min(count/total_est, 1.0)
                             bar.progress(progress_val)
                             elapsed = time.time() - start_time
-                            per_attempt = elapsed / count
-                            eta = (total_est - count) * per_attempt
+                            if count > 0 and elapsed > 0:
+                                per_attempt = elapsed / count
+                                eta = (total_est - count) * per_attempt
+                                status.info(f"🚀 المحاولة: {pwd} ({count}/{total_est})")
+                                time_info.warning(f"⏳ المتبقي: {int(eta)} ثانية")
+                        
+                        res = attempt_unlock(office_file, pwd)
+                        if res:
+                            st.success(f"✔️ تم الاختراق بنجاح! كلمة السر هي: {pwd}")
+                            st.balloons()
+                            st.download_button("📥 تحميل الملف مفتوحاً", res.getvalue(), "Unlocked_File.xlsx")
+                            found = True
+                            break
+                
+                if not found:
+                    st.error("❌ فشل الهجوم. لم يتم العثور على كلمة السر ضمن النطاق.")
+            except Exception as e:
+                st.error(f"حدث خطأ فني: {e}")

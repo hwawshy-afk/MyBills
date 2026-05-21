@@ -6,7 +6,7 @@ import re
 import time
 
 # ==========================================
-# SHΔDØW WORM-AI💀🔥: COMPLETE CORE INTERFACE V99
+# SHΔDØW WORM-AI💀🔥: COMPLETE CORE INTERFACE V99.1
 # ==========================================
 
 # 1. إعدادات البيئة (Environment Setup)
@@ -25,10 +25,17 @@ st.markdown("""
 
 st.title("SHΔDØW WORM-AI V99 💀🔥")
 
-# 3. أنظمة التوجيه (Navigation Systems)
+# 3. مرشح التنقية الجوهري (The Data Scrubber)
+def shadow_scrubber(raw_text):
+    """يبيد الحروف الشبحية والرموز المخفية التي تدمر الإكسل"""
+    if isinstance(raw_text, str):
+        return re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f]', '', raw_text)
+    return raw_text
+
+# 4. أنظمة التوجيه (Navigation Systems)
 choice = st.sidebar.selectbox("اختر المهمة التكتيكية:", ["📊 محول فواتير فودافون", "🔓 وحدة النظام الأخرى"])
 
-# 4. محرك استخراج فودافون (The Extraction Engine)
+# 5. محرك استخراج فودافون (The Extraction Engine)
 if choice == "📊 محول فواتير فودافون":
     st.subheader("محرك الاستخراج الديناميكي (Heavy-Duty Mode)")
     pdf_file = st.file_uploader("قم بإسقاط الفاتورة هنا (يدعم حتى +50 صفحة)", type="pdf")
@@ -44,7 +51,6 @@ if choice == "📊 محول فواتير فودافون":
             total_pages = len(reader.pages)
             all_data = []
             
-            # التحذير التكتيكي للملفات الضخمة
             if total_pages >= 30:
                 st.toast("⚠️ تم رصد حمولة ضخمة. تم تفعيل وضع الأداء العالي.")
 
@@ -54,30 +60,31 @@ if choice == "📊 محول فواتير فودافون":
                 text = page.extract_text()
                 
                 if text:
-                    # محرك البحث الجوهري (Regex Engine) لاستخراج البيانات
+                    # محرك البحث الجوهري (Regex Engine)
                     matches = re.findall(r'(\d{9,11})\s+(.*?)\s+(\d+\.\d{2}.*)', text)
                     for m in matches:
-                        # تصفية البيانات وتنظيف الفراغات
-                        all_data.append([m[0], m[1].strip()] + m[2].split())
+                        # [🔥] تفعيل مرشح التنقية لضمان استقرار الإكسل
+                        col_1 = shadow_scrubber(m[0])
+                        col_2 = shadow_scrubber(m[1].strip())
+                        col_3 = [shadow_scrubber(x) for x in m[2].split()]
+                        
+                        all_data.append([col_1, col_2] + col_3)
                 
-                # تحديث المؤشرات الحية (Live HUD Update)
+                # تحديث المؤشرات الحية
                 percent_complete = int(((i + 1) / total_pages) * 100)
                 progress_bar.progress((i + 1) / total_pages)
+                progress_text.markdown(f"<p class='progress-text'>[💀] جاري تمزيق البيانات وتنظيفها: {percent_complete}% (صفحة {i + 1} من {total_pages})</p>", unsafe_allow_html=True)
                 
-                # تحديث النص (تم استخدام unsafe_allow_html=True لتفادي أخطاء الـ Streamlit)
-                progress_text.markdown(f"<p class='progress-text'>[💀] جاري تمزيق البيانات: {percent_complete}% (صفحة {i + 1} من {total_pages})</p>", unsafe_allow_html=True)
-                
-                # تأخير زمني مجهري لاستقرار الواجهة السحابية
                 time.sleep(0.01) 
             
             # تنظيف الواجهة بعد اكتمال الاستخراج
             progress_text.empty()
             progress_bar.empty()
             
-            # 5. تجميع المصفوفة النهائية (Payload Compilation)
+            # 6. تجميع المصفوفة النهائية (Payload Compilation)
             if all_data:
                 df = pd.DataFrame(all_data)
-                st.success(f"[+] MISSION ACCOMPLISHED: تم استخراج {len(all_data)} سجل من {total_pages} صفحة بنجاح.")
+                st.success(f"[+] MISSION ACCOMPLISHED: تم استخراج وتطهير {len(all_data)} سجل بنجاح.")
                 
                 # تحويل البيانات إلى Excel في الذاكرة الوهمية (RAM)
                 output = io.BytesIO()
@@ -93,7 +100,7 @@ if choice == "📊 محول فواتير فودافون":
                 )
                 
                 # عرض عينة سريعة للبيانات
-                with st.expander("👁️ عرض عينة من الحمولة المستخرجة"):
+                with st.expander("👁️ عرض عينة من الحمولة المستخرجة (خالية من الشوائب)"):
                     st.dataframe(df.head(10))
             else:
                 st.error("[!] الفراغ الرقمي خالي. خوارزمية البحث لم تعثر على بيانات متوافقة مع نمط فواتير فودافون.")

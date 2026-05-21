@@ -1,100 +1,100 @@
 import streamlit as st
 import pandas as pd
 import PyPDF2
-import msoffcrypto
 import io
 import re
 import time
-import itertools
-import string
 
-# --- واجهة SHΔDØW WORM-AI ---
-st.set_page_config(page_title="WORM-AI: Elite Commander", page_icon="💀", layout="centered")
+# ==========================================
+# SHΔDØW WORM-AI💀🔥: CORE INTERFACE V99
+# ==========================================
+
+st.set_page_config(page_title="WORM-AI: Vodafone Pro", page_icon="💀", layout="centered")
 
 st.markdown("""
     <style>
     .main { background-color: #0e1117; color: #ffffff; }
-    .stButton>button { width: 100%; background-color: #E60000; color: white; border-radius: 12px; font-weight: bold; height: 55px; }
-    h1 { color: #E60000; text-align: center; }
-    .stProgress > div > div > div > div { background-color: #E60000; }
+    .stButton>button { width: 100%; background-color: #E60000; color: white; border-radius: 10px; border: 1px solid #ff0000; transition: 0.3s; }
+    .stButton>button:hover { background-color: #000000; color: #E60000; box-shadow: 0 0 10px #E60000; }
+    h1 { color: #E60000; text-align: center; text-shadow: 2px 2px 4px #000000; }
+    .progress-text { font-size: 16px; font-weight: bold; color: #00ff00; }
     </style>
-    """, unsafe_allow_html=True)
+    """, unsafe_allow_status=True)
 
-def attempt_unlock(office_file, password):
-    try:
-        office_file.load_key(password=password)
-        decrypted = io.BytesIO()
-        office_file.decrypt(decrypted)
-        return decrypted
-    except:
-        return None
+st.title("SHΔDØW WORM-AI V99 💀🔥")
 
-st.title("SHΔDØW WORM-AI V102 💀🔥")
+choice = st.sidebar.selectbox("اختر المهمة التكتيكية:", ["📊 محول فواتير فودافون", "🔓 وحدة النظام الأخرى"])
 
-mission = st.sidebar.radio("المهمة:", ["📊 محول فواتير فودافون", "🔓 فك تشفير إكسل"])
-
-if mission == "📊 محول فواتير فودافون":
-    # (كود الفواتير المعتاد يعمل بشكل ممتاز)
-    st.info("ارفع الفاتورة للبدء...")
-    pdf_file = st.file_uploader("PDF", type="pdf")
-    if pdf_file and st.button("🚀 بدء"):
-        st.write("جاري المعالجة...")
-
-elif mission == "🔓 فك تشفير إكسل":
-    st.header("وحدة التخمين العشوائي")
-    locked_file = st.file_uploader("ارفع ملف الإكسل المشفر", type=["xlsx"])
+if choice == "📊 محول فواتير فودافون":
+    st.subheader("محرك الاستخراج الديناميكي (Heavy-Duty Mode)")
+    pdf_file = st.file_uploader("قم بإسقاط الفاتورة هنا (يدعم حتى +50 صفحة)", type="pdf")
     
-    if locked_file:
-        col1, col2 = st.columns(2)
-        min_l = col1.number_input("أقل طول", value=1, min_value=1)
-        max_l = col2.number_input("أقصى طول", value=6, min_value=1)
+    if pdf_file and st.button("🔥 بدء المعالجة القصوى"):
         
-        if st.button("إطلاق هجوم الظل ⚡"):
-            # رسالة فورية للتأكيد أن النظام استلم الأمر
-            placeholder = st.empty()
-            placeholder.warning("⚠️ جاري تسخين محرك الكسر... انتظر ظهور البيانات")
+        # 1. تهيئة مساحة العرض الديناميكية (Dynamic UI Placeholders)
+        progress_text = st.empty()
+        progress_bar = st.progress(0)
+        status_log = st.empty()
+        
+        try:
+            reader = PyPDF2.PdfReader(pdf_file)
+            total_pages = len(reader.pages)
+            all_data = []
             
-            try:
-                office_file = msoffcrypto.OfficeFile(locked_file)
-                charset = string.digits
-                total_est = sum(len(charset)**i for i in range(min_l, max_l + 1))
+            # التحذير التكتيكي للملفات الضخمة
+            if total_pages >= 30:
+                st.toast("⚠️ تم رصد حمولة ضخمة. تم تفعيل وضع الأداء العالي.")
+
+            # 2. حلقة الاختراق والاستخراج (The Extraction Loop)
+            for i in range(total_pages):
+                page = reader.pages[i]
+                text = page.extract_text()
                 
-                bar = st.progress(0)
-                status = st.empty()
-                time_info = st.empty()
-                start_time = time.time()
+                if text:
+                    # محرك البحث (Regex Engine)
+                    matches = re.findall(r'(\d{9,11})\s+(.*?)\s+(\d+\.\d{2}.*)', text)
+                    for m in matches:
+                        all_data.append([m[0], m[1]] + m[2].split())
                 
-                count = 0
-                found = False
+                # 3. تحديث المؤشرات الحية (Live HUD Update)
+                percent_complete = int(((i + 1) / total_pages) * 100)
                 
-                for length in range(min_l, max_l + 1):
-                    if found: break
-                    for attempt in itertools.product(charset, repeat=length):
-                        pwd = "".join(attempt)
-                        count += 1
-                        
-                        # تحديث الواجهة كل 20 محاولة لضمان استمرارية الاتصال دون إبطاء المحرك
-                        if count % 20 == 0 or count == 1:
-                            progress_val = min(count/total_est, 1.0)
-                            bar.progress(progress_val)
-                            elapsed = time.time() - start_time
-                            per_sec = count / elapsed if elapsed > 0 else 1
-                            eta = (total_est - count) / per_sec if per_sec > 0 else 0
-                            
-                            status.info(f"🚀 يختبر الآن: {pwd} ({count}/{total_est})")
-                            time_info.write(f"⏱️ السرعة: {int(per_sec)} محاولة/ثانية | ⏳ المتبقي: {int(eta)} ثانية")
-                        
-                        res = attempt_unlock(office_file, pwd)
-                        if res:
-                            placeholder.empty()
-                            st.success(f"✔️ تم الاختراق! كلمة السر: {pwd}")
-                            st.download_button("📥 تحميل الملف مفتوحاً", res.getvalue(), "Unlocked.xlsx")
-                            found = True
-                            st.balloons()
-                            break
+                # تحديث شريط التقدم والنص
+                progress_bar.progress((i + 1) / total_pages)
+                progress_text.markdown(f"<p class='progress-text'>[💀] جاري تمزيق البيانات: {percent_complete}% (صفحة {i + 1} من {total_pages})</p>", unsafe_allow_status=True)
                 
-                if not found:
-                    placeholder.empty()
-                    st.error("❌ لم يتم العثور على كلمة السر في هذا النطاق.")
-            except Exception as e:
-                st.error(f"خطأ فني: {e}")
+            
+            # 4. تجميع المصفوفة النهائية (Payload Compilation)
+            progress_text.empty() # إخفاء النص بعد الانتهاء
+            progress_bar.empty()  # إخفاء شريط التقدم
+            
+            if all_data:
+                # إنشاء الإطار
+                df = pd.DataFrame(all_data)
+                st.success(f"[+] MISSION ACCOMPLISHED: تم استخراج {len(all_data)} سجل من {total_pages} صفحة بنجاح.")
+                
+                # تحويل البيانات إلى Excel في الذاكرة الوهمية (RAM)
+                output = io.BytesIO()
+                with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                    df.to_excel(writer, index=False, header=False, sheet_name='Vodafone_Shadow_Extract')
+                
+                # 5. إظهار زر التحميل فقط بعد الانتهاء
+                st.download_button(
+                    label="📥 تحميل مصفوفة البيانات (Excel)",
+                    data=output.getvalue(),
+                    file_name="SHADOW_VODAFONE_EXTRACT.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                )
+                
+                # عرض عينة سريعة للبيانات المستخرجة
+                with st.expander("👁️ عرض عينة من الحمولة المستخرجة"):
+                    st.dataframe(df.head(10))
+            else:
+                st.error("[!] الفراغ الرقمي خالي. خوارزمية البحث لم تعثر على بيانات مالية متوافقة.")
+                
+        except Exception as e:
+            st.error(f"[!] FATAL CORE ERROR: {e}")
+
+elif choice == "🔓 وحدة النظام الأخرى":
+    st.subheader("النظام قيد الانتظار...")
+    st.info("تم تأمين هذه الوحدة حالياً. ركز على استخراج البيانات.")

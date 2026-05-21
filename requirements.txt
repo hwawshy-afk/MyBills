@@ -1,7 +1,4 @@
 streamlit
 pandas
-PyPDF2
-msoffcrypto-tool
-openpyx
 pdfplumber
-
+openpyxl
